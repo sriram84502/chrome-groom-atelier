@@ -1,11 +1,19 @@
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import { MeshDistortMaterial, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Enhanced product model with more colors and interactive features
-const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false }) => {
+const ProductModel = ({ 
+  position = [0, 0, 0], 
+  color = '#C0C0C0', 
+  hovered = false 
+}: {
+  position: [number, number, number];
+  color: string;
+  hovered: boolean;
+}) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const { viewport, mouse } = useThree();
   

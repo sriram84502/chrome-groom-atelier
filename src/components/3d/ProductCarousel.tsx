@@ -1,7 +1,6 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
-import { useSpring, animated } from '@react-spring/three';
 import * as THREE from 'three';
 import ProductModel from './ProductModel';
 
@@ -22,12 +21,7 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
   const lastMouseX = useRef(0);
   const isDragging = useRef(false);
   
-  // Enhanced spring animation
-  const { rotation } = useSpring({
-    rotation: targetRotation,
-    config: { mass: 5, tension: 350, friction: 40 }
-  });
-
+  // Handle product click
   const handleProductClick = (id: number) => {
     setActiveProduct(id);
     selectProduct(id);
@@ -37,29 +31,6 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
     const targetAngle = (productIndex - Math.floor(products.length / 2)) * (Math.PI / 8);
     setTargetRotation(-targetAngle);
   };
-
-  // Handle mouse drag for interactive rotation
-  useEffect(() => {
-    const handleMouseDown = () => {
-      isDragging.current = true;
-    };
-    
-    const handleMouseUp = () => {
-      isDragging.current = false;
-    };
-    
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('touchstart', handleMouseDown);
-    window.addEventListener('touchend', handleMouseUp);
-    
-    return () => {
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchstart', handleMouseDown);
-      window.removeEventListener('touchend', handleMouseUp);
-    };
-  }, []);
 
   useFrame((state, delta) => {
     if (!groupRef.current) return;
@@ -79,7 +50,7 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
     if (activeProduct) {
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
-        rotation.get(),
+        targetRotation,
         0.1
       );
     } else {
@@ -88,8 +59,17 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
     }
   });
 
+  // Set up mouse and touch event handlers directly in the scene
+  const onPointerDown = () => {
+    isDragging.current = true;
+  };
+  
+  const onPointerUp = () => {
+    isDragging.current = false;
+  };
+
   return (
-    <animated.group ref={groupRef}>
+    <group ref={groupRef} onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
       {products.map((product) => (
         <group 
           key={product.id} 
@@ -107,7 +87,7 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
           />
         </group>
       ))}
-    </animated.group>
+    </group>
   );
 };
 
