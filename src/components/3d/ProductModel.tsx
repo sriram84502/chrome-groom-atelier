@@ -2,19 +2,17 @@
 import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF, useTexture, MeshDistortMaterial } from '@react-three/drei';
-import { Mesh, Vector3 } from 'three';
-import { motion } from 'framer-motion-3d';
+import { Mesh } from 'three';
 
-// Mock product model since we don't have actual 3D models
-// In a real scenario, you'd import actual 3D models
+// Enhanced product model with more colors and effects
 const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false }) => {
   const meshRef = useRef<Mesh>(null);
   
-  // Use a simple cylinder as placeholder for product bottle
+  // Use a simple cylinder as placeholder for product bottle with enhanced colors
   useFrame((state) => {
     if (!meshRef.current) return;
     
-    // Gentle floating animation
+    // Enhanced floating animation
     meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
     
     // Subtle rotation when not being directly manipulated
@@ -23,29 +21,61 @@ const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false
     }
   });
 
+  // Make the colors more vibrant based on the input color
+  const getBaseColor = () => {
+    // Add a slight shimmer effect by varying the color slightly
+    const shimmerFactor = Math.sin(Date.now() * 0.001) * 0.1 + 0.9;
+    return color;
+  };
+
   return (
     <group position={[position[0], position[1], position[2]]}>
-      {/* Replace framer-motion-3d with regular Three.js elements */}
+      {/* Main bottle body */}
       <mesh 
         ref={meshRef} 
         castShadow 
         receiveShadow
         scale={hovered ? 1.1 : 1}
       >
-        <cylinderGeometry args={[0.7, 0.7, 2, 32]} />
+        <cylinderGeometry args={[0.7, 0.6, 2.2, 32]} />
         <MeshDistortMaterial
-          color={color}
-          speed={5}
+          color={getBaseColor()}
+          speed={2}
           distort={hovered ? 0.2 : 0.1}
-          metalness={0.8}
+          metalness={0.6}
           roughness={0.2}
-          envMapIntensity={1}
+          envMapIntensity={1.5}
         />
       </mesh>
+      
+      {/* Bottle neck */}
+      <mesh position={[0, 1, 0]} castShadow>
+        <cylinderGeometry args={[0.4, 0.5, 0.4, 32]} />
+        <meshStandardMaterial 
+          color={hovered ? "#FFFFFF" : "#DDDDDD"} 
+          metalness={0.7} 
+          roughness={0.3} 
+        />
+      </mesh>
+      
       {/* Bottle cap */}
-      <mesh position={[0, 1.2, 0]} castShadow>
-        <cylinderGeometry args={[0.4, 0.4, 0.4, 32]} />
-        <meshStandardMaterial color="#333333" metalness={0.7} roughness={0.3} />
+      <mesh position={[0, 1.3, 0]} castShadow>
+        <cylinderGeometry args={[0.4, 0.4, 0.3, 32]} />
+        <meshStandardMaterial 
+          color="#333333" 
+          metalness={0.8} 
+          roughness={0.2} 
+        />
+      </mesh>
+      
+      {/* Decorative ring */}
+      <mesh position={[0, 0.6, 0]} castShadow>
+        <torusGeometry args={[0.72, 0.05, 16, 32]} />
+        <meshStandardMaterial 
+          color={hovered ? "#FFD700" : "#B8B8B8"} 
+          metalness={0.9} 
+          roughness={0.1} 
+        />
       </mesh>
     </group>
   );
