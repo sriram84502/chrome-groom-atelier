@@ -19,7 +19,7 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
   const { viewport } = useThree();
   const isMobile = viewport.width < 5;
   
-  const [spring, api] = useSpring(() => ({
+  const [springs, api] = useSpring(() => ({
     rotation: [0, 0, 0],
     config: { mass: 5, tension: 350, friction: 40 }
   }));
@@ -55,7 +55,13 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
   }, [activeProduct, api]);
 
   return (
-    <animated.group ref={groupRef} rotation={spring.rotation}>
+    <animated.group 
+      ref={groupRef} 
+      // Fix: Explicitly define the rotation properties instead of passing springs.rotation directly
+      rotation-x={springs.rotation.to((r) => r[0])}
+      rotation-y={springs.rotation.to((r) => r[1])}
+      rotation-z={springs.rotation.to((r) => r[2])}
+    >
       {products.map((product) => (
         <group key={product.id} onClick={() => handleProductClick(product.id)}>
           <ProductModel 
