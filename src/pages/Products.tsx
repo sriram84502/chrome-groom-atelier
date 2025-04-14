@@ -324,15 +324,18 @@ const Products = () => {
                   <p className="text-white/60 text-sm mb-4">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-white/80 font-medium">${product.price}</span>
-                    <Button 
-                      size="sm" 
-                      className="bg-brand-silver text-brand-black hover:bg-white"
-                      onClick={() => handleAddToCart(product.id, product.name)}
+                    <motion.div
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <ShoppingBag size={16} className="mr-2" /> ADD
-                    </Button>
+                      <Button 
+                        size="sm" 
+                        className="bg-brand-silver text-brand-black hover:bg-white"
+                        onClick={() => handleAddToCart(product.id, product.name)}
+                      >
+                        <ShoppingBag size={16} className="mr-2" /> ADD
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>
@@ -354,15 +357,17 @@ const Products = () => {
       <Footer />
       
       {/* Add custom styles for hiding scrollbars while allowing scrolling */}
-      <style jsx global>{`
-        .hide-scrollbar {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;  /* Chrome, Safari and Opera */
-        }
-      `}</style>
+      <style>
+        {`
+          .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
     </div>
   );
 };

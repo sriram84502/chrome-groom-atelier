@@ -1,13 +1,12 @@
 
 import { useRef, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
-import { useGLTF, useTexture, MeshDistortMaterial, Float } from '@react-three/drei';
-import { Mesh, Vector3 } from 'three';
+import { MeshDistortMaterial, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Enhanced product model with more colors and interactive features
 const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false }) => {
-  const meshRef = useRef<Mesh>(null);
+  const meshRef = useRef<THREE.Mesh>(null);
   const { viewport, mouse } = useThree();
   
   // Create gradient colors for more vibrant appearance
@@ -44,12 +43,12 @@ const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false
   });
 
   return (
-    <Float 
-      speed={hovered ? 3 : 1.5} 
-      rotationIntensity={hovered ? 0.3 : 0.1} 
-      floatIntensity={hovered ? 0.3 : 0.1}
-    >
-      <group position={[position[0], position[1], position[2]]}>
+    <group position={[position[0], position[1], position[2]]}>
+      <Float 
+        speed={hovered ? 3 : 1.5} 
+        rotationIntensity={hovered ? 0.3 : 0.1} 
+        floatIntensity={hovered ? 0.3 : 0.1}
+      >
         {/* Main bottle body with gradient material */}
         <mesh 
           ref={meshRef} 
@@ -125,8 +124,8 @@ const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false
             />
           </mesh>
         )}
-      </group>
-    </Float>
+      </Float>
+    </group>
   );
 };
 
