@@ -19,10 +19,11 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
   const { viewport } = useThree();
   const isMobile = viewport.width < 5;
   
-  const [springs, api] = useSpring(() => ({
-    rotation: [0, 0, 0],
+  // Fix: Simplify the animation setup
+  const { rotationY } = useSpring({
+    rotationY: targetRotation.current,
     config: { mass: 5, tension: 350, friction: 40 }
-  }));
+  });
 
   const handleProductClick = (id: number) => {
     setActiveProduct(id);
@@ -32,10 +33,6 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
     const productIndex = products.findIndex(p => p.id === id);
     const targetAngle = (productIndex - Math.floor(products.length / 2)) * (Math.PI / 8);
     targetRotation.current = -targetAngle;
-    
-    api.start({
-      rotation: [0, targetRotation.current, 0]
-    });
   };
 
   useFrame((state, delta) => {
@@ -48,34 +45,32 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
   useEffect(() => {
     // Reset rotation when deselecting a product
     if (activeProduct === null && groupRef.current) {
-      api.start({
-        rotation: [0, groupRef.current.rotation.y, 0]
-      });
+      targetRotation.current = groupRef.current.rotation.y;
     }
-  }, [activeProduct, api]);
+  }, [activeProduct]);
 
   return (
-    <animated.group 
-      ref={groupRef} 
-      // Fix: Explicitly define the rotation properties instead of passing springs.rotation directly
-      rotation-x={springs.rotation.to((r) => r[0])}
-      rotation-y={springs.rotation.to((r) => r[1])}
-      rotation-z={springs.rotation.to((r) => r[2])}
-    >
+    // Fix: Use a regular group with ref instead of animated.group
+    <group ref={groupRef}>
       {products.map((product) => (
-        <group key={product.id} onClick={() => handleProductClick(product.id)}>
+        <group 
+          key={product.id} 
+          onClick={() => handleProductClick(product.id)}
+          // Apply animation directly to each product group
+          position={[
+            isMobile ? product.position[0] * 0.5 : product.position[0],
+            product.position[1],
+            product.position[2]
+          ]}
+        >
           <ProductModel 
-            position={[
-              isMobile ? product.position[0] * 0.5 : product.position[0],
-              product.position[1],
-              product.position[2]
-            ]} 
+            position={[0, 0, 0]}
             color={product.color}
             hovered={activeProduct === product.id}
           />
         </group>
       ))}
-    </animated.group>
+    </group>
   );
 };
 

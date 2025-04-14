@@ -24,16 +24,14 @@ const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false
   });
 
   return (
-    <motion.group
-      position={new Vector3(position[0], position[1], position[2])}
-      animate={{
-        scale: hovered ? 1.1 : 1,
-      }}
-      transition={{
-        duration: 0.3,
-      }}
-    >
-      <mesh ref={meshRef} castShadow receiveShadow>
+    <group position={[position[0], position[1], position[2]]}>
+      {/* Replace framer-motion-3d with regular Three.js elements */}
+      <mesh 
+        ref={meshRef} 
+        castShadow 
+        receiveShadow
+        scale={hovered ? 1.1 : 1}
+      >
         <cylinderGeometry args={[0.7, 0.7, 2, 32]} />
         <MeshDistortMaterial
           color={color}
@@ -49,7 +47,7 @@ const ProductModel = ({ position = [0, 0, 0], color = '#C0C0C0', hovered = false
         <cylinderGeometry args={[0.4, 0.4, 0.4, 32]} />
         <meshStandardMaterial color="#333333" metalness={0.7} roughness={0.3} />
       </mesh>
-    </motion.group>
+    </group>
   );
 };
 
