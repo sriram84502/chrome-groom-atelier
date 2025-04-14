@@ -5,20 +5,19 @@ import * as THREE from 'three';
 import ProductModel from './ProductModel';
 
 const products = [
-  { id: 1, position: [-2.5, 0, 0], color: '#8AC7DB' },  // Light blue for face wash
-  { id: 2, position: [-1.25, 0, 0], color: '#FF6B6B' }, // Coral for serum
-  { id: 3, position: [0, 0, 0], color: '#4E937A' },     // Sea green for moisturizer
-  { id: 4, position: [1.25, 0, 0], color: '#FFB347' },  // Orange for beard oil
-  { id: 5, position: [2.5, 0, 0], color: '#B19CD9' },   // Lavender for shampoo
+  { id: 1, position: [-2.5, 0, 0], color: '#8AC7DB' },  // Light blue
+  { id: 2, position: [-1.25, 0, 0], color: '#FF6B6B' }, // Coral
+  { id: 3, position: [0, 0, 0], color: '#4E937A' },     // Sea green
+  { id: 4, position: [1.25, 0, 0], color: '#FFB347' },  // Orange
+  { id: 5, position: [2.5, 0, 0], color: '#B19CD9' },   // Lavender
 ];
 
 const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => void }) => {
   const [activeProduct, setActiveProduct] = useState<number | null>(null);
   const groupRef = useRef<THREE.Group>(null);
   const [targetRotation, setTargetRotation] = useState(0);
-  const { viewport, mouse } = useThree();
+  const { viewport } = useThree();
   const isMobile = viewport.width < 5;
-  const lastMouseX = useRef(0);
   const isDragging = useRef(false);
   
   // Handle product click
@@ -35,19 +34,9 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
   useFrame((state, delta) => {
     if (!groupRef.current) return;
     
-    // Mouse drag rotation
-    if (isDragging.current && !activeProduct) {
-      const deltaX = mouse.x - lastMouseX.current;
-      if (groupRef.current) {
-        groupRef.current.rotation.y += deltaX * 2;
-        setTargetRotation(groupRef.current.rotation.y);
-      }
-    }
-    
-    lastMouseX.current = mouse.x;
-    
     // Apply spring animation or auto-rotate
     if (activeProduct) {
+      // Smooth transition to target position
       groupRef.current.rotation.y = THREE.MathUtils.lerp(
         groupRef.current.rotation.y,
         targetRotation,
@@ -59,7 +48,7 @@ const ProductCarousel = ({ selectProduct }: { selectProduct: (id: number) => voi
     }
   });
 
-  // Set up mouse and touch event handlers directly in the scene
+  // Set up pointer event handlers
   const onPointerDown = () => {
     isDragging.current = true;
   };

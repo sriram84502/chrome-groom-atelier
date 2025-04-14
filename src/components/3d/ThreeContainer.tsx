@@ -34,6 +34,7 @@ const Loader = () => {
 
 // Error Fallback component
 const ErrorFallback = ({ error }: { error: Error }) => {
+  console.error("3D rendering error:", error);
   return (
     <Html center>
       <div className="flex flex-col items-center justify-center text-center">
@@ -46,7 +47,11 @@ const ErrorFallback = ({ error }: { error: Error }) => {
   );
 };
 
-const ThreeScene = ({ children, environmentPreset, controls = false }: { 
+const ThreeScene = ({ 
+  children, 
+  environmentPreset, 
+  controls = false 
+}: { 
   children: ReactNode; 
   environmentPreset: ThreeContainerProps['environmentPreset'];
   controls?: boolean;
@@ -55,7 +60,7 @@ const ThreeScene = ({ children, environmentPreset, controls = false }: {
     <Suspense fallback={<Loader />}>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45} />
       
-      {/* Enhanced lighting setup */}
+      {/* Basic lighting setup */}
       <ambientLight intensity={0.7} />
       <spotLight 
         position={[10, 10, 10]} 
@@ -66,10 +71,10 @@ const ThreeScene = ({ children, environmentPreset, controls = false }: {
       />
       <pointLight position={[-10, -10, -10]} intensity={0.5} />
       
-      {/* Rich environment map for better reflections */}
+      {/* Environment */}
       <Environment preset={environmentPreset} background={false} />
       
-      {/* Improved shadows */}
+      {/* Shadows */}
       <ContactShadows 
         position={[0, -1.5, 0]} 
         opacity={0.5} 
